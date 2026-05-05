@@ -1,6 +1,6 @@
 ---
-title: "Project Title here"
-author: "Group Member Names Here"
+title: "Ticketmaster Venue Analysis Final Project"
+author: "Ademir Ferreyra, Gabriela Perez, Ishika Reddy, Elizabeth Jarvio-Barahona, Krishna Desai"
 subtitle: "Final project for INST447, Spring 2026"
 format: html
 ---
@@ -8,6 +8,8 @@ format: html
 # Executive Summary
 
 The text in this section includes:
+
+Our project was inspired by our love for music and entertainment. We believed that it would be interesting to delve deeper into concert traction in different large-scale venues, their features, and figure out what makes them attractive to both the audience and the performer. The analysis is designed for artists and artist managers and inform decisions what makes a venue successful by analyzing different characteristics such as audience capacity, location, venue size, and attendance. 
 
 - overview summary
 - discussion of audience & purpose
