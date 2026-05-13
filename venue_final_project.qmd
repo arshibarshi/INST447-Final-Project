@@ -9,7 +9,7 @@ format: html
 
 The text in this section includes:
 
-Our project was inspired by our love for music and entertainment. We believed that it would be interesting to delve deeper into concert traction in different large-scale venues, their features, and figure out what makes them attractive to both the audience and the performer. The analysis is designed for artists and artist managers and inform decisions what makes a venue successful by analyzing different characteristics such as audience capacity, location, venue size, and attendance. 
+Our project was inspired by our interest in music and entertainment. We believed that it would be interesting to delve deeper into concert traction in different large-scale venues. Examining  their features to better understand what makes them attractive to both the audience and the performer. The analysis is designed for artists and artist managers to make informed decisions of what makes a venue successful by analyzing different characteristics such as audience capacity, location, venue size, and attendance. Artists and managers may greatly benefit from retaining this information because it helps them maximize their fan experience, ticket sales, and overall a successful show.
 
 - overview summary
 - discussion of audience & purpose
