@@ -27,10 +27,17 @@ The text in this section includes:
 ```{python}
 # The code chunk(s) in this section should include:
 # - code that gets the data from the source into Python
+
 # - code that does some initial (re-)formatting
 # - code that accomplishes merging (if merging is performed)
 
 # The code should be well-documented, including how choices were made.
+
+import requests
+
+url = "https://app.ticketmaster.com/discovery/v2/events.json?apikey=lnaMP5J5f1akxINTK2DMb8oDS3kWGuEK"
+
+data = requests.get(url)
 ```
 
 
