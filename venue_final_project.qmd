@@ -5,6 +5,12 @@ subtitle: "Final project for INST447, Spring 2026"
 format: html
 ---
 
+```{python}
+import pandas as pd
+import requests
+
+```
+
 # Executive Summary
 
 The text in this section includes:
@@ -24,25 +30,40 @@ The text in this section includes:
 - discussion of how the data was originally collected or generated (how did it get recorded?)
 - details about each of the original variables
 
+- We were able to find this source by going on Google and typing 'Ticketmaster API'.
+- We knew Ticketmaster was a large company and thought we would get the best venue information from them.
+ -The first link that popped up was the Discovery API by Ticketmaster.
+- Once we clicked on the link, we ended up doing some research and figured out we need an account to register and receive an API Key.
+- Once we have completed the registration, it will ask what kind of business we are using it for. We put in school.
+- From there, a unique API key was generated and given to us.
+
+
+
 ```{python}
-# The code chunk(s) in this section should include:
-# - code that gets the data from the source into Python
+url = "https://app.ticketmaster.com/discovery/v2/events.json?apikey=lnaMP5J5f1akxINTK2DMb8oDS3kWGuEK&countryCode=US&classificationName=music&size=200"
 
-# - code that does some initial (re-)formatting
-# - code that accomplishes merging (if merging is performed)
+response = requests.get(url)
 
-# The code should be well-documented, including how choices were made.
+data = response.json()
 
-import requests
+events = data["_embedded"]["events"]
 
-url = "https://app.ticketmaster.com/discovery/v2/events.json?apikey=lnaMP5J5f1akxINTK2DMb8oDS3kWGuEK"
-
-data = requests.get(url)
+len(events)
 
 ```
 
 
 # Analysis & Evaluation
+
+
+- The source ends up returning event data in JSON format.
+- Each event includes nested information such as event name, event date, venue name, city, and state.
+
+- The variable is 'name', which represents the event name. An example from this data would be 'Eagles Live at Sphere'.
+- 'dates.start.localDate' is the variable to show what day the concert is on. An example would be 2026-09-18
+- '_embedded.venues.name' is the variable for the venue name. This names the venue where the event takes place. An example would be Madison Square Garden
+-  '_embedded.venues.city.name' is the variable for the city where the event takes place. An example would be Arlington.
+-  '_embedded.venues.state.stateCode' is the variable for the state where the event takes place. An example would be TX.
 
 The text in this section includes:
 
@@ -72,13 +93,45 @@ The text in this section includes:
 - why did you do these things?
 
 ```{python}
-# The code chunk(s) in this section should include:
-# - all of the code that gets the data from the initial 
-#   extraction/formatting/merging to the final data product
-#   right before "export/loading"
+# Transforming Data
+rows = []
 
-# Documentation/explanation for the code should be in the Markdown
-# text portions, not primarily in comments.
+for event in events:
+
+    venue = event["_embedded"]["venues"][0]
+
+    row = {
+        "event name": event.get("name"),
+        "event date": event["dates"]["start"].get("localDate"),
+        "venue name": venue.get("name"),
+        "city": venue["city"].get("name"),
+        "state": venue["state"].get("stateCode"),
+
+    }
+    rows.append(row)
+
+df = pd.DataFrame(rows)
+df
+
+#EDA Statistics
+df.describe()
+
+df.isna().sum()
+
+df["state"].value_counts()
+df["city"].value_counts()
+df["venue name"].value_counts()
+df["event name"].value_counts()
+df["event date"].agg(["min", "max"])
+
+
+state_summary = df.groupby("state").agg(
+    number_of_events=("event name", "count"),
+    number_of_venues=("venue name", "nunique"),
+    number_of_cities=("city", "nunique")
+).sort_values("number_of_events", ascending=False)
+
+state_summary
 
 ```
 
@@ -96,3 +149,35 @@ The text in this section includes:
 # - The code needed to "finalize" or "export" the final data product.
 
 ```
+
+
+
+
+# Bias EDA details
+#This project used the Ticketmaster Discovery API to extract music events and venues data in the US.
+#The API key allowed us to request data from an online source. The code sends a request to Ticketmaster and receives the data in JSON format.
+#The API had parameters that filtered the results. The countryCode=US parameter limited the results to events in the United States. The classificationName=music parameter limited the results to music events. The size=200 parameter requested up to 200 event records from the API.
+#The Python code used the requests library to send the API request. The line requests.get(url) contacted the Ticketmaster API using the URL and parameters.
+#The response.json() command converted the API response into a Python dictionary so that the event information could be accessed in Python.
+#The Ticketmaster API returns data in a JSON format.
+#After the events were loaded, the code looped through each event one at a time.
+#For each event, the code selected only the fields needed for this project: event name, event date, venue name, city, and state, which are renamed from their original varibale name. These values were placed into a simple Python dictionary called row. Each row was added to a list called rows.
+#The code used pandas.DataFrame(rows) to convert the list of rows into a table. This table became the main dataset used for the rest of the project. No merging was performed because this project used only one data source.
+
+```{python}
+print(df.describe())
+print(df.info())
+```
+
+
+
+
+
+#The final product is a CSV file called "ticketmaster_music_evets.csv"
+#Each row of this file has event information returned from the Ticketmaster Discovery API
+#The columns of this file show event name, venue name, event data, city name, and state name.
+#This file can be downloaded using any software that supports CSV
+df.to_csv("ticketmaster_music_events.csv", index=False)
+
+from google.colab import files
+files.download("ticketmaster_music_events.csv")
