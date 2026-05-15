@@ -8,7 +8,6 @@ format: html
 ```{python}
 import pandas as pd
 import requests
-
 ```
 
 # Executive Summary
@@ -38,7 +37,6 @@ The text in this section includes:
 - From there, a unique API key was generated and given to us.
 
 
-
 ```{python}
 url = "https://app.ticketmaster.com/discovery/v2/events.json?apikey=lnaMP5J5f1akxINTK2DMb8oDS3kWGuEK&countryCode=US&classificationName=music&size=200"
 
@@ -52,9 +50,7 @@ len(events)
 
 ```
 
-
 # Analysis & Evaluation
-
 
 - The source ends up returning event data in JSON format.
 - Each event includes nested information such as event name, event date, venue name, city, and state.
@@ -154,22 +150,20 @@ The text in this section includes:
 
 
 # Bias EDA details
-#This project used the Ticketmaster Discovery API to extract music events and venues data in the US.
-#The API key allowed us to request data from an online source. The code sends a request to Ticketmaster and receives the data in JSON format.
-#The API had parameters that filtered the results. The countryCode=US parameter limited the results to events in the United States. The classificationName=music parameter limited the results to music events. The size=200 parameter requested up to 200 event records from the API.
-#The Python code used the requests library to send the API request. The line requests.get(url) contacted the Ticketmaster API using the URL and parameters.
-#The response.json() command converted the API response into a Python dictionary so that the event information could be accessed in Python.
-#The Ticketmaster API returns data in a JSON format.
-#After the events were loaded, the code looped through each event one at a time.
-#For each event, the code selected only the fields needed for this project: event name, event date, venue name, city, and state, which are renamed from their original varibale name. These values were placed into a simple Python dictionary called row. Each row was added to a list called rows.
-#The code used pandas.DataFrame(rows) to convert the list of rows into a table. This table became the main dataset used for the rest of the project. No merging was performed because this project used only one data source.
+- This project used the Ticketmaster Discovery API to extract music events and venues data in the US.
+- The API key allowed us to request data from an online source. The code sends a request to Ticketmaster and receives the data in JSON format.
+- The API had parameters that filtered the results. The countryCode=US parameter limited the results to events in the United States. The classificationName=music parameter limited the results to music events. The size=200 parameter requested up to 200 event records from the API.
+- The Python code used the requests library to send the API request. The line requests.get(url) contacted the Ticketmaster API using the URL and parameters.
+- The response.json() command converted the API response into a Python dictionary so that the event information could be accessed in Python.
+- The Ticketmaster API returns data in a JSON format.
+- After the events were loaded, the code looped through each event one at a time.
+- For each event, the code selected only the fields needed for this project: event name, event date, venue name, city, and state, which are renamed from their original varibale name. These values were placed into a simple Python dictionary called row. Each row was added to a list called rows.
+- The code used pandas.DataFrame(rows) to convert the list of rows into a table. This table became the main dataset used for the rest of the project. No merging was performed because this project used only one data source.
 
 ```{python}
 print(df.describe())
 print(df.info())
 ```
-
-
 
 
 
