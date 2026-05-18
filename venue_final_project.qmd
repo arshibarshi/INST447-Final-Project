@@ -27,6 +27,8 @@ Our results showed that there were venues that had higher levels of concert acti
 
 On the other hand, we were able to identify which venues are hosting the most concerts this year across different states and cities, and found that there are certain venues that are attracting a lot of artists. However, the dataset is limited by the API's restriction on ticketmaster-listed events, which may not fully represent all concerts nationwide. In the future, we would plan on expanding the dataset by collecting data over time or incorporating additional sources to provide a larger-scale analysis of venue popularity and trends in the music industry. Even with the limitations, this project provides valuable insights for artists and managers looking to plan tours and select venues based on current activity levels.
 
+# Extra Mile
+- The most challenging aspects of this project were reorganizing the file into a coherent structure and clearly explaining the extraction process. The transformation section was also particularly difficult because the dataset only contained 200 lines of data, with the majority heavily skewed toward one or two venues. This imbalance created additional challenges during the EDA and descriptive statistics phase, as the data did not provide an even representation across all venue locations. As a result, it was harder to accurately analyze and reflect on the variables intended to compare performance and trends across every venue.
 
 # Source(s) & Extraction
 Data Source Overview
