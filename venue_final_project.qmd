@@ -8,33 +8,67 @@ format: html
 ```{python}
 import pandas as pd
 import requests
+import matplotlib.pyplot as plt
 ```
 
+
 # Executive Summary
-
-The text in this section includes:
-
-Our project was inspired by our interest in music and entertainment. We believed that it would be interesting to delve deeper into concert traction in different large-scale venues. Examining  their features to better understand what makes them attractive to both the audience and the performer. The analysis is designed for artists and artist managers to make informed decisions of what makes a venue successful by analyzing different characteristics such as audience capacity, location, venue size, and attendance. Artists and managers may greatly benefit from retaining this information because it helps them maximize their fan experience, ticket sales, and overall a successful show.
-
-- overview summary
-- discussion of audience & purpose
-- conclusions/final discussion
-
-
-# Source(s) & Extraction
-
-The text in this section includes:
-
-- details and documentation about the **source** of the data
-- discussion of how the data was originally collected or generated (how did it get recorded?)
-- details about each of the original variables
-
+-Our project was inspired by our interest in music and entertainment. We believed that it would be interesting to delve deeper into concert traction in different large-scale venues. Examining  their features to better understand what makes them attractive to both the audience and the performer. The analysis is designed for artists and artist managers to make informed decisions of what makes a venue successful by analyzing different characteristics such as audience capacity, location, venue size, and attendance. Artists and managers may greatly benefit from retaining this information because it helps them maximize their fan experience, ticket sales, and overall a successful show
 - We were able to find this source by going on Google and typing 'Ticketmaster API'.
 - We knew Ticketmaster was a large company and thought we would get the best venue information from them.
- -The first link that popped up was the Discovery API by Ticketmaster.
+- The first link that popped up was the Discovery API by Ticketmaster.
 - Once we clicked on the link, we ended up doing some research and figured out we need an account to register and receive an API Key.
 - Once we have completed the registration, it will ask what kind of business we are using it for. We put in school.
 - From there, a unique API key was generated and given to us.
+
+# Source(s) & Extraction
+Data Source Overview
+- The data for this project was obtained from the Ticketmaster Discovery API, which provides structured access to event and venue information listed on Ticketmaster's platform. The API is publicly accessible to developers and allows users to retreive event metadata in JSON format.
+
+- To locate the data without using code:
+
+- 1. Navigate to the Ticketmaster Developer Portal: https://developer.ticketmaster.com/
+  2. Create an account and generate an API key
+  3. Review the Discovery API documentation
+  4. Use endpoints such as /events and /venues
+  5. Apply filters such as classificationName=music, countryCode=US, or date ranges to narrow results
+
+- The data originates from Ticketmaster's ticketing system, where event organizers and venues submit official event details. These records are stored and updated as part of Ticketmaster's internal database, meaning the dataset reflects real-world event listings but may be biased toward Ticketmaster-partnered events.
+
+Variables of Interest
+The Ticketmaster API returns event-level data. Each row represents a single upcoming concert. The variables extracted for this project are:
+- 1. Event Name
+     - original variable name: name
+     - description: the official title of the concert or event
+     - type of values: text(string)
+     - example values: "Eagles Live at Sphere", "Harry Styles: Together, Together"
+- 2. Event Date
+     - original variable name: dates.start.localDate
+     - description: the scheduled date of the event
+     - type of values: Date (YYYY-MM-DD)
+     - example values: 2026-09-18, 2026-10-03
+- 3. Venue Name
+     - original variable name: _embedded.venues.name
+     - description: the name of the venue hosting the event
+     - type of values: text (string)
+     - example values: "Madison Square Garden", "Sphere"
+- 4. City
+     - original variable name: _embedded.venues.city.name
+     - description: the city where the venue is located
+     - type of values: text (string)
+     - example values: "Las Vegas", "New York"
+- 5. State
+     - original variable name: _embedded.venues.state.stateCode
+     - description: the U.S. state abbreviation for the venue location
+     - type of values: text (string)
+     - example values: "NV", "NY", "CA", "TX"
+
+Data Format and Accessibility:
+- The Ticketmaster API returns data in JSON format, which was parsed and converted into a tabular structure using pandas.DataFrame(). The initial extraction produces an event-level dataset(df), where each row corresponds to a single upcoming concert.
+
+- This event-level DataFrame serves as the foundation for the project. Because our purpose is to compare venues, not individual events, the event-level data is later transformed into a venue-level dataset (venue_df) through grouping and aggregation. This transformation is documented in the Transformation Process section.
+
+- The raw event-level dataset was exported as ticketmaster_music_events.csv, and the final venue-level dataset was exported as ticketmaster_venue_summary.csv, both of which can be opened in Excel, Google Sheets, or any statistical software.
 
 
 ```{python}
@@ -48,47 +82,6 @@ events = data["_embedded"]["events"]
 
 len(events)
 
-```
-
-# Analysis & Evaluation
-
-- The source ends up returning event data in JSON format.
-- Each event includes nested information such as event name, event date, venue name, city, and state.
-
-- The variable is 'name', which represents the event name. An example from this data would be 'Eagles Live at Sphere'.
-- 'dates.start.localDate' is the variable to show what day the concert is on. An example would be 2026-09-18
-- '_embedded.venues.name' is the variable for the venue name. This names the venue where the event takes place. An example would be Madison Square Garden
--  '_embedded.venues.city.name' is the variable for the city where the event takes place. An example would be Arlington.
--  '_embedded.venues.state.stateCode' is the variable for the state where the event takes place. An example would be TX.
-
-The text in this section includes:
-
-- descriptions of all variables
-- noteworthy patterns,
-- including discussion of potential sources of bias or unbalanced patterns
-
-You are encouraged to structure this major section into subsections as you wish, and to break up and interweave code chunks, to help with organization and readability.
-
-```{python}
-# The code chunk(s) in this section should include:
-# - descriptive stats for all relevant variables
-# - descriptive stat(s) for any relevant relationships
-# - visualizations for all relevant variables
-# - visualizations for any relevant relationships
-# - code for exploring potential sources of bias, including missing data, unbalanced groups, etc.
-
-
-```
-
-
-# Transformation Processes
-
-The text in this section includes:
-
-- what transformations/manipulations did you apply beyond the initial extraction/formatting/merging?
-- why did you do these things?
-
-```{python}
 # Transforming Data
 rows = []
 
@@ -109,7 +102,86 @@ for event in events:
 df = pd.DataFrame(rows)
 df
 
-#EDA Statistics
+```
+
+# Extraction/Merging Code/Analysis & Evaluation Documentation
+- This project uses the Ticketmaster Discovery API to extract structured information about music events and venues in the United States. The API key provides authenticated access to Ticketmaster's online database. The Python code sends a request to the API, receives the event data in JSON format, and converts it into a table suitable for analysis.
+
+How the API Requests Works
+- The code uses the requests library to contact the Ticketmaster API.
+- The URL includes several parameters that filter the results:
+      - countryCode=US: returns only events located in the United States
+      - classificationName=music: limits results to music events
+      - size = 200: requests up to 200 event records in one response
+- The command requests.get(url) sends the request to Ticketmaster's servers.
+- The API returns a JSON response, which is converted into a Python dictionary using response.json().
+
+How the Data is Extracted
+- The Ticketmaster API stores event information inside a nested JSON structure.
+- The code accesses the list of events using: data["_embedded"]["events"]
+- The program loops through each event one at a time.
+- For each event, the code extracts only the fields needed for this project:
+       - event name -> originally name
+       - event data -> originally dates.start.localDate
+       - venue name -> originally _embedded.venues.name
+       - city -> originally _embedded.venues.city.name
+       - state -> originally _embedded.venues.state.stateCode
+- These values are stored in a dictionary called row, and each row is added to a list called rows.
+
+How the Extracted Data is Used
+- The event-level DataFrame serves as the foundation for the project. Because the Ticketmaster API returns data only at the event level, and the purpose of this project is to compare venues, additional transformation steps are required to reshape the data into a venue-level summary.
+- These transformation steps, include cleaning, grouping, and aggregating events by venue, and are documented in the Transformation Processes section.
+
+No merging was required, as the project uses a single data source.
+
+# Transformation Processes
+- The raw data had 200 rows, one per upcoming concert event.
+- Since the project is about venues, the data needed to be reshaped into a venue-level summary.
+
+# Cleaning Steps
+- First, the data was cleaned: whitespace was stripped from text columns, event date was converted to datetime, rows missing venue/city/state were dropped, and duplicates were removed.
+
+# Reshaping to Venue-Level Data
+- We grouped the clean data by venue, city, and state.
+- For each venue, we calculated:
+  - concerts_hosted counts upcoming listings per venue
+  - sample_events shows up to 3 example events
+  - location combines city and state for readability.
+
+# MAJOR NOTE/Limitation:
+- the API only returns 200 upcoming events on the free tier, so concerts_hosted reflects future scheduled concerts as of the date the API was called, not all-time historical counts.
+- The Sphere's count of 138 is due to an active residency, not overall long-term popularity.
+
+- The final product is a 23-row venue-level dataset for comparing venues by activity and location.
+
+
+```{python}
+#Drop rows missing venue name, city, or state
+df_clean = df.dropna(subset=["venue name", "city", "state"])
+
+#Drop duplicate rows
+df_clean = df_clean.drop_duplicates()
+
+#Aggregate from event-level to venue-level
+venue_df = df_clean.groupby(["venue name", "city", "state"]).agg(
+    concerts_hosted=("event name", "count"),
+    sample_events=("event name", lambda x: ", ".join(x.head(3)))
+).reset_index()
+
+#Add a combined location column
+venue_df["location"] = venue_df["city"] + ", " + venue_df["state"]
+
+#Sort by most active venues
+venue_df = venue_df.sort_values("concerts_hosted", ascending=False).reset_index(drop=True)
+
+
+```
+
+# Analysis & Evaluation
+
+Descriptive EDA Statistics
+```{python}
+# EDA Statistics
 df.describe()
 
 df.isna().sum()
@@ -131,47 +203,130 @@ state_summary
 
 ```
 
-
-# Data Product & Guide
-
-The text in this section includes:
-
-- description and "user's guide" for the final data product
-- general info and description on each variable/column in the data product
-  - note: the descriptive stats, etc. should already be in the Analysis section, but if there are any new/transformed variables that were not in that section, those should have descriptive stats and plots here
-
 ```{python}
-# The code chunk(s) in this section should include:
-# - The code needed to "finalize" or "export" the final data product.
+#EDA Statistics
+display(venue_df.info())
 
+display(venue_df.isna().sum())
+
+display(venue_df["concerts_hosted"].agg(["min", "max", "mean", "median"]))
+
+display(venue_df["venue name"].value_counts())
+
+display(venue_df["city"].value_counts())
+
+display(venue_df["state"].value_counts())
+
+venue_df["location"] = venue_df["city"] + ", " + venue_df["state"]
+
+display(venue_df["location"].value_counts())
+
+venue_df["sample_events_length"] = venue_df["sample_events"].astype(str).apply(len)
+
+display(venue_df["sample_events_length"].agg(["min", "max", "mean", "median"]))
+
+display(venue_df.groupby("state")["concerts_hosted"].mean().sort_values(ascending=False))
 ```
 
 
-
-
-# Bias EDA details
-- This project used the Ticketmaster Discovery API to extract music events and venues data in the US.
-- The API key allowed us to request data from an online source. The code sends a request to Ticketmaster and receives the data in JSON format.
-- The API had parameters that filtered the results. The countryCode=US parameter limited the results to events in the United States. The classificationName=music parameter limited the results to music events. The size=200 parameter requested up to 200 event records from the API.
-- The Python code used the requests library to send the API request. The line requests.get(url) contacted the Ticketmaster API using the URL and parameters.
-- The response.json() command converted the API response into a Python dictionary so that the event information could be accessed in Python.
-- The Ticketmaster API returns data in a JSON format.
-- After the events were loaded, the code looped through each event one at a time.
-- For each event, the code selected only the fields needed for this project: event name, event date, venue name, city, and state, which are renamed from their original varibale name. These values were placed into a simple Python dictionary called row. Each row was added to a list called rows.
-- The code used pandas.DataFrame(rows) to convert the list of rows into a table. This table became the main dataset used for the rest of the project. No merging was performed because this project used only one data source.
-
+# Descriptive EDA Visualizations
 ```{python}
-print(df.describe())
-print(df.info())
+# Top 3 Events at Venue column
+#venue_df = df_clean.groupby(["venue name", "city", "state"]).agg(
+ #   concerts_hosted=("event name", "count"),
+  #  sample_events=("event name", lambda x: ", ".join(x.head(3)))  # shows up to 3 events
+#).reset_index()
+
+venue_df
+
+# EDA Visualization
+
+# State
+# Visualization for Top 10 States with events
+df["state"].value_counts().head(10).plot(kind = "bar")
+plt.title("Top 10 States by Number of Events")
+plt.xlabel("State")
+plt.ylabel("Number of Events")
+plt.show()
+
+# City
+df["city"].value_counts().head(10).plot(kind="bar")
+plt.title("Top 10 Cities by Number of Events")
+plt.xlabel("City")
+plt.ylabel("Number of Events")
+plt.show()
+
+# Top Venues by concerts
+venue_df.head(10).plot(
+    x = "venue name",
+    y = "concerts_hosted",
+    kind = ("bar")
+)
+
+plt.title("Top 10 Venues by Concerts Hosted")
+#plt.xticks(rotation = 45)
+plt.show()
+
+# Month Histogram
+df["event date"] = pd.to_datetime(df["event date"])
+df["event date"].dt.month.plot(kind="hist", bins=12)
+plt.title("Distribution of Events by Month")
+plt.show()
 ```
 
+# Descriptive EDA Narrative
+The descriptive EDA statistics and visualizations showed that the final dataset for the venue is not evenly spread across all venues or locations. Based on the results, we noticed that the Sphere in Las Vegas had a much higher number of listed concerts than the other venues, which caused an uneven distribution. This made the data heavily skewed since most venues had only a small number of upcoming concerts except the Sphere because it took up 138 out of 200 events in the API data. The concerts_hosted' variable counted the upcoming music events each venue had in the Ticketmaster API results, which had the unexpected data. This was highly unexpected because the project is supposed to compare popular venues overall, but the data ended up being mostly influenced by the Sphere instead of showing more of a balanced spread across different venues.
 
+Some variables especially the categorical ones showed expected patterns. The `venue name` variable listed the venues included in the final data product, and the `city`, `state` and `location` variables showed where exactly those venues are located. These variables had an expected distribution because the more popular locations such as Las Vegas and New York had more events and venues listed. This makes sense because major cities usually have more concerts and more events on Ticketmaster. The only thing about the distribution was that it is still important to acknowledge for every city and venue in the US because the data has to represent everywhere equally.
 
-#The final product is a CSV file called "ticketmaster_music_evets.csv"
-#Each row of this file has event information returned from the Ticketmaster Discovery API
-#The columns of this file show event name, venue name, event data, city name, and state name.
+The `sample_events` variable gave examples of up to three events at each venue. This variable was summarized by looking at the length of the event text which really helped show what the sample event descriptions looked like across venues. Overall, the EDA suggests that the dataset is useful for seeing which venues are the most popular and active in the Ticketmaster results, but it should not be treated as a complete ranking of the best venues since the data was heavily skewed due to the Sphere in Las Vegas having majority of the events. The API only returned some of upcoming music events, which means the patterns mainly reflect what was listed at the time the data was collected.
+
+# Bias-Related EDA Code
+```{python}
+df.isna().sum()
+df["state"].value_counts(normalize=True)
+df["city"].value_counts(normalize=True)
+df.groupby("state")["venue name"].nunique()
+```
+
+# Bias-Related EDA Narrative
+- Several sources of bias are present in the dataset, and understanding them is essential for interpreting the results accurately.
+
+- The most significant source of bias comes from the Ticketmaster API's 200-event limit. This introduces temporal bias: venues with active residencies or tours scheduled at the time of extraction appear disproportionately important. For example, the Sphere's extremely high event count is not a measure of long-term popularity but rather a reflection of multipe ongoing residencies.
+
+- There is also platform bias. Ticketmaster does not list every concert in the U.S.; some artists and venues use other ticketing platforms. As a result, the dataset overrepresents large, Ticketmaster-affiliated venues and underrepresents independent or smaller venues. This affects geographic patterns as well, states with strong Ticketmaster partnerships appear more active than they may be in reality.
+
+- Geographic imbalance is another form of bias. The state and city frequency tables show that a small number of locations dominate the dataset. While this partially reflects real entertainment hubs, it is also influenced by Ticketmaster's market presence and the API's event-limit cutoff.
+
+- These biases should be considered when drawing conclusions about venue popularity or geographic patterns.
+
+Data Product and Guide
+- The final data product for this project is a venue-level dataset created from the original event-level API data. This dataset is designed for artists, artist managers, and tour planners who need a clear, concise summary of venue activity across the United States.
+
+- Unlike the raw event-level dataset, which contained one row per concert, the final dataset contains one row per venue, making it easier to compare venues by activity level, location, and event characterisitics.
+
+- Final Dataset:
+  - ticketmaster_venue_summary.csv
+
+  - Variables include:
+    - venue name: official name of the venue
+    - city: city where the venue is located
+    - state: U.S. state abbreviation
+    - concerts_hosted: number of upcoming concerts scheduled at the venue
+    - sample_events: up to three example events hosted at the venue
+    - location: combined "City, State" field for readability
+
+- This file can be downloaded using any software that supports CSV
+
+```{python}
 #This file can be downloaded using any software that supports CSV
-df.to_csv("ticketmaster_music_events.csv", index=False)
+#df.to_csv("ticketmaster_music_events.csv", index=False)
+venue_df.to_csv("ticketmaster_venue_summary.csv", index = False)
 
 from google.colab import files
-files.download("ticketmaster_music_events.csv")
+#files.download("ticketmaster_music_events.csv")
+files.download("ticketmaster_venue_summary.csv")
+```
+
+# Conclusion
+Overall, even though our group had to shift focus on our project's goals, we were still able to successfully use the Ticketmaster API to analyze music events and venue activity across the United States.We were able to identify which venues are hosting the most concerts this year across different states and cities, and found that there are certain venues that are attracting a lot of artists. However, the dataset is limited by the API's restriction on ticketmaster-listed events, which may not fully represent all concerts nationwide. In the future, we would plan on expanding the dataset by collecting data over time or incorporating additional sources to provide a larger-scale analysis of venue popularity and trends in the music industry. Even the limitations, this project provides valuable insights for artists and managers looking to plan tours and select venues based on current activity levels.
