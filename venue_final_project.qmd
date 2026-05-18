@@ -21,6 +21,13 @@ import matplotlib.pyplot as plt
 - Once we have completed the registration, it will ask what kind of business we are using it for. We put in school.
 - From there, a unique API key was generated and given to us.
 
+Our biggest challenge was being able to find a public dataset that met our project's needs, which caused us to have to shift our direction of the project. However, even though our group had to shift focus on our project's goals, we were still able to successfully use the Ticketmaster API as our primary sourceto analyze music events and venue activity across the United States. 
+
+Our results showed that there were venues that had higher levels of concert activities than in other states and cities. The data was heavily skewed because of the Sphere in Las Vegas, which had 138 concerts listed in the API due to an active residency. This made it difficult to be able to compare venues across the country since the API only allowed us to get 200 events, which meant that the majority of the events were from the Sphere. This was a major setback for our project because we wanted to be able to compare venues across the country, but the data ended up being mostly influenced by one venue.
+
+On the other hand, we were able to identify which venues are hosting the most concerts this year across different states and cities, and found that there are certain venues that are attracting a lot of artists. However, the dataset is limited by the API's restriction on ticketmaster-listed events, which may not fully represent all concerts nationwide. In the future, we would plan on expanding the dataset by collecting data over time or incorporating additional sources to provide a larger-scale analysis of venue popularity and trends in the music industry. Even with the limitations, this project provides valuable insights for artists and managers looking to plan tours and select venues based on current activity levels.
+
+
 # Source(s) & Extraction
 Data Source Overview
 - The data for this project was obtained from the Ticketmaster Discovery API, which provides structured access to event and venue information listed on Ticketmaster's platform. The API is publicly accessible to developers and allows users to retreive event metadata in JSON format.
@@ -69,6 +76,8 @@ Data Format and Accessibility:
 - This event-level DataFrame serves as the foundation for the project. Because our purpose is to compare venues, not individual events, the event-level data is later transformed into a venue-level dataset (venue_df) through grouping and aggregation. This transformation is documented in the Transformation Process section.
 
 - The raw event-level dataset was exported as ticketmaster_music_events.csv, and the final venue-level dataset was exported as ticketmaster_venue_summary.csv, both of which can be opened in Excel, Google Sheets, or any statistical software.
+
+
 
 
 ```{python}
@@ -327,6 +336,3 @@ from google.colab import files
 #files.download("ticketmaster_music_events.csv")
 files.download("ticketmaster_venue_summary.csv")
 ```
-
-# Conclusion
-Overall, even though our group had to shift focus on our project's goals, we were still able to successfully use the Ticketmaster API to analyze music events and venue activity across the United States.We were able to identify which venues are hosting the most concerts this year across different states and cities, and found that there are certain venues that are attracting a lot of artists. However, the dataset is limited by the API's restriction on ticketmaster-listed events, which may not fully represent all concerts nationwide. In the future, we would plan on expanding the dataset by collecting data over time or incorporating additional sources to provide a larger-scale analysis of venue popularity and trends in the music industry. Even the limitations, this project provides valuable insights for artists and managers looking to plan tours and select venues based on current activity levels.
